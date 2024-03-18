@@ -14,7 +14,7 @@ class ModulesCreateAPIView(generics.CreateAPIView):
     def perform_create(self, serializer):
         new_module = serializer.save()
         new_module.owner = self.request.user
-        new_module.sabe()
+        new_module.save()
 
 
 class ModulesListAPIView(generics.ListAPIView):
