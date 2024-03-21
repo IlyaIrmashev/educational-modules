@@ -4,6 +4,11 @@
 Для запуска проекта через docker необходимо выполнить ниже указанную команду и заполнить файл .env_sample
 docker-compose up -d --build
 
+Документация:
+http://localhost:8000/swagger/
+или
+http://localhost:8000/redoc/
+
 ## Описание
 
 Написать небольшой проект на Django и Django Rest Framework с моделью "Образовательные модули". В них есть:
@@ -11,11 +16,6 @@ docker-compose up -d --build
 - порядковый номер
 - название
 - описание
-
-Документация:
-http://localhost:8000/swagger/
-или
-http://localhost:8000/redoc/
 
 ## Задача
 
