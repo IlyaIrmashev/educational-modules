@@ -10,7 +10,6 @@ class UserTestCase(APITestCase):
     def create_user(self):
         """Создание и авторизация пользователя"""
         self.email = 'example@test.ru'
-        self.tg_username = 'telegramtest'
         self.user = User(email=self.email, is_staff=True)
         self.user.set_password('123Qaz')
         self.user.save()
@@ -51,7 +50,6 @@ class UserTestCase(APITestCase):
         """Тестирование обновления пользователя"""
         self.create_user()
         response = self.client.patch(f'/users/update/{self.user.id}/', {'email': 'newexample@sky.pro',
-                                                                        'tg_username': 'newtelegram',
                                                                         'name': 'test'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
