@@ -63,6 +63,7 @@ class ModuleTestCase(APITestCase):
         }
 
     def test_create_module(self):
+        """Тестирование создания модуля"""
         response = self.client.post(
             reverse('modules:module_create'),
             self.data
@@ -81,6 +82,7 @@ class ModuleTestCase(APITestCase):
         )
 
     def test_list_modules(self):
+        """Тестирование вывода списка модулей"""
         self.test_create_module()
         response = self.client.get(reverse('modules:modules'))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -98,6 +100,7 @@ class ModuleTestCase(APITestCase):
         )
 
     def test_retrieve_module(self):
+        """Отображение одного модуля по ID"""
         self.test_create_module()
         pk = Module.objects.all().latest('pk').pk
         response = self.client.get(f'/modules/{pk}/')
@@ -114,6 +117,7 @@ class ModuleTestCase(APITestCase):
         )
 
     def test_update_module(self):
+        """Тестирование обновления модуля"""
         self.test_create_module()
         pk = Module.objects.all().latest('pk').pk
         response = self.client.patch(f'/modules/update/{pk}/', {'name': 'Test changed'})
@@ -130,6 +134,7 @@ class ModuleTestCase(APITestCase):
         )
 
     def test_destroy_module(self):
+        """Тестирование удаления модуля"""
         self.test_create_module()
         pk = Module.objects.all().latest('pk').pk
         response = self.client.delete(f'/modules/delete/{pk}/')
