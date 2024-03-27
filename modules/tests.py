@@ -14,11 +14,14 @@ class ModuleTest(TestCase):
     """Тест модели модуля"""
 
     def setUp(self):
-        Module.objects.create(
+        self.module = Module.objects.create(
             number=1,
             name='Test',
             description='Test description'
         )
+
+    def test_module_str(self):
+        self.assertEqual(str(self.module), 'Test')
 
     def test_module_name(self):
         module = Module.objects.get(number=1)

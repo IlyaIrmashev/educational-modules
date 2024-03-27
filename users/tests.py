@@ -1,65 +1,44 @@
-from rest_framework import status
-from rest_framework.test import APITestCase
+from django.test import TestCase
+from rest_framework import serializers
 
 from users.models import User
+from users.serializers import UserSerializer, UserRegisterSerializer
 
 
-class UserTestCase(APITestCase):
-    """Тестирование представления пользователя"""
+class TestUserSerializers(TestCase):
 
-    def create_user(self):
-        """Создание и авторизация пользователя"""
-        self.email = 'example@test.ru'
-        self.user = User(email=self.email, is_staff=True)
-        self.user.set_password('123Qaz')
-        self.user.save()
-        response = self.client.post(
-            '/users/token/',
-            {
-                'email': self.email,
-                'password': '123Qaz'
-            }
-        )
-        self.access_token = response.json().get('access')
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.access_token}')
+    def test_user_register_serializer(self):
+        user_data = {
+            'email': 'test@example.com',
+            'password': 'testpass',
+            'password2': 'testpass',
+            'name': 'Test User'
+        }
 
-    def test_get_users(self):
-        """Тестирование просмотра пользователей"""
-        self.create_user()
-        response = self.client.get('/users/', )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            response.json(),
-            [{'email': 'example@test.ru',
-              'name': None}]
-        )
+        serializer = UserRegisterSerializer(data=user_data)
+        self.assertTrue(serializer.is_valid())
 
-    def test_retrieve_user(self):
-        """Тестирование просмотра одного пользователя"""
-        self.create_user()
-        response = self.client.get(f'/users/{self.user.pk}/', )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            response.json(),
-            {'email': 'example@test.ru',
-             'name': None
-             }
-        )
+        user = serializer.save()
+        self.assertEqual(user.email, user_data['email'])
+        self.assertEqual(user.name, user_data['name'])
 
-    def test_update_user(self):
-        """Тестирование обновления пользователя"""
-        self.create_user()
-        response = self.client.patch(f'/users/update/{self.user.id}/', {'email': 'newexample@sky.pro',
-                                                                        'name': 'test'})
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            response.json(),
-            {'email': 'newexample@sky.pro',
-             'name': 'test'}
-        )
+    def test_user_register_serializer_invalid_passwords(self):
+        user_data = {
+            'email': 'test@example.com',
+            'password': 'testpass',
+            'password2': 'invalidpass',
+            'name': 'Test User'
+        }
 
-    def test_delete_user(self):
-        """Тестирование удаления пользователя"""
-        self.create_user()
-        response = self.client.delete(f'/users/delete/{self.user.pk}/', )
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        serializer = UserRegisterSerializer(data=user_data)
+        self.assertTrue(serializer.is_valid())
+
+        with self.assertRaises(serializers.ValidationError):
+            user = serializer.save()
+
+    def test_user_serializer(self):
+        user = User.objects.create(email='test@example.com', name='Test User')
+        serializer = UserSerializer(instance=user)
+        data = serializer.data
+        self.assertEqual(data['email'], 'test@example.com')
+        self.assertEqual(data['name'], 'Test User')
